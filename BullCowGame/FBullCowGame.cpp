@@ -8,11 +8,26 @@ FBullCowGame::FBullCowGame()
 
 int FBullCowGame::GetMaxTries() const { return myMaxTries; }
 int FBullCowGame::GetCurrentTry() const { return myCurrentTry; }
+const FString HIDDEN_WORD = "planet";
 
+
+void FBullCowGame::PlayGame()
+{
+	int maxTries = GetMaxTries();
+	std::cout << maxTries << std::endl;
+
+	for (int i = 0; i < maxTries; i++)
+	{
+		std::string Guess = GetGuess();
+		if (Guess == "***Complete***")
+			break;
+	}
+
+}
 
 void FBullCowGame::Reset()
 {
-	const FString HIDDEN_WORD = "planet";
+	myHiddenWord = "planet";
 	myCurrentTry = 1;
 	myMaxTries = 5;
 }
@@ -22,13 +37,21 @@ std::string FBullCowGame::GetGuess()
 {
 	// get the guess from the player
 	FText Guess = "";
-	FGuessResponse response = SubmitGuess(Guess);
-	std::cout << "Bulls = " << response.NumberofBulls;
-	
-
-
 	std::cout << "Try " << GetCurrentTry() << ": Guess the Word: ";
 	getline(std::cin, Guess);
+
+	FGuessResponse response = SubmitGuess(Guess);
+	// repeat the guess back to them
+	PrintBack(Guess);
+	std::cout << "Bulls = " << response.NumberofBulls << std::endl;
+	std::cout << "Cows = " << response.NumberOfCows<< std::endl;
+
+	if (response.Success)
+	{
+		std::cout << "Contratulations. You Guessed the isogram in " << myCurrentTry << " turns\n\n";
+		Guess = "***Complete***";
+	}
+
 
 	return Guess;
 }
@@ -41,16 +64,21 @@ FGuessResponse FBullCowGame::SubmitGuess(FString guess)
 	//setup a return variable
 	FGuessResponse response;
 
-	int32 hiddenWordLength = myHiddenWord.length();
+	int32 hiddenWordLength = (int32)myHiddenWord.length();
 	for (int32 i = 0; i< hiddenWordLength; i++)
 	{
 		for (int32 j = 0; j<guess.length(); j++)
 		{
-			
+			if ((guess[i] == myHiddenWord[j]) && (i == j))
+				response.NumberofBulls++;
+			if ((guess[i] == myHiddenWord[j]) && (i != j))
+				response.NumberOfCows++;
 		}
 	}
 
-
+	if (response.NumberofBulls == myHiddenWord.length())
+		response.Success = true;
+	
 	return response;
 }
 
@@ -70,20 +98,6 @@ void FBullCowGame::PrintIntro() const
 	std::cout << "Welcome to Bulls and Cows, a fun word game." << std::endl;
 	std::cout << "Can you guess the " << WORD_LENGTH << " letter isogram I'm thinking of\n";
 	return;
-}
-
-void FBullCowGame::PlayGame()
-{
-	int maxTries = GetMaxTries();
-	std::cout << maxTries << std::endl;
-
-	for (int i = 0; i < WORD_LENGTH; i++)
-	{
-		std::string Guess = GetGuess();
-		// repeat the guess back to them
-		PrintBack(Guess);
-	}
-
 }
 
 bool FBullCowGame::AskToPlayAgain()

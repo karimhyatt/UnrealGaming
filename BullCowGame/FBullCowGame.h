@@ -8,6 +8,7 @@ using int32 = int;
 // All values initialised to 0
 struct FGuessResponse
 {
+	bool Success = false;
 	int32 NumberofBulls = 0;
 	int32 NumberOfCows = 0;
 };
