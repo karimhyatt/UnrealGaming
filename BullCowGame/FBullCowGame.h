@@ -13,6 +13,14 @@ struct FGuessResponse
 	int32 NumberOfCows = 0;
 };
 
+enum class EWordStatus
+{
+	OK,
+	Not_Isogram,
+	Wrong_Length,
+	Not_Lowercase
+};
+
 class FBullCowGame
 {
 public:
@@ -21,25 +29,30 @@ public:
 
 	int32 GetMaxTries() const; 
 	int32 GetCurrentTry() const;
-	void PrintIntro() const;
-	void PrintBack(FString Guess) const;
+	int32 GetWordLength() const;
 
-	bool IsGameWon() const;
+	void PrintIntro() const;
+	void PrintBackGuess() const;
 
 	FString GetGuess();
-	FGuessResponse SubmitGuess(FString);
+	FGuessResponse SubmitGuess();
+
+	bool GuessIsLowerCase();
+	bool GuessIsIsogram();
+	EWordStatus CheckGuessValidity();
 	
-	bool CheckGuessValidity(FString);
-	
-	
+	void PrintGuessResult(const FGuessResponse response);
+
+	void PrintError(EWordStatus status);
 	void PlayGame();
 	bool AskToPlayAgain();
 	void Reset();
 
 private:
-	const int32 WORD_LENGTH = 5;
 
-	int32 myCurrentTry;
-	int32 myMaxTries;
-	FString myHiddenWord;
+	int32 myCurrentTry = 0;
+	int32 myMaxTries = 0;
+	FString myHiddenWord = "";
+	FString guess = "";
+	bool gameIsWon = false;
 };

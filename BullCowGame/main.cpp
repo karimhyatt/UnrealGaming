@@ -10,6 +10,7 @@ int main()
 {
 	do
 	{
+		BCGame.Reset();
 		BCGame.PrintIntro();
 		BCGame.PlayGame();
 	} 
